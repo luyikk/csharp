@@ -17,9 +17,9 @@ namespace rust_run
         static Interop()
         {
             var api_version = Interop.my_api_guard();
-            if (api_version != 3970726040101399907ul)
+            if (api_version != 14262554742144196148ul)
             {
-                throw new TypeLoadException($"API reports hash {api_version} which differs from hash in bindings (3970726040101399907). You probably forgot to update / copy either the bindings or the library.");
+                throw new TypeLoadException($"API reports hash {api_version} which differs from hash in bindings (14262554742144196148). You probably forgot to update / copy either the bindings or the library.");
             }
         }
 
@@ -100,6 +100,17 @@ namespace rust_run
 
         public static void rs_new_checked(ref IntPtr context, float x, float y) {
             var rval = rs_new(ref context, x, y);;
+            if (rval != MyFFIError.Ok)
+            {
+                throw new InteropException<MyFFIError>(rval);
+            }
+        }
+
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "rs_error")]
+        public static extern MyFFIError rs_error(IntPtr context);
+
+        public static void rs_error_checked(IntPtr context) {
+            var rval = rs_error(context);;
             if (rval != MyFFIError.Ok)
             {
                 throw new InteropException<MyFFIError>(rval);
@@ -315,6 +326,15 @@ namespace rust_run
         public void Dispose()
         {
             var rval = Interop.rs_destroy(ref _context);
+            if (rval != MyFFIError.Ok)
+            {
+                throw new InteropException<MyFFIError>(rval);
+            }
+        }
+
+        public void Error()
+        {
+            var rval = Interop.rs_error(_context);
             if (rval != MyFFIError.Ok)
             {
                 throw new InteropException<MyFFIError>(rval);

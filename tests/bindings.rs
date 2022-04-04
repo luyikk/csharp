@@ -1,11 +1,11 @@
+use csharp::my_inventory;
 use interoptopus::util::NamespaceMappings;
 use interoptopus::{Error, Interop};
-use csharp::my_inventory;
 
 #[test]
 fn bindings_csharp() -> Result<(), Error> {
-    use interoptopus_backend_csharp::{Config, Generator};
     use interoptopus_backend_csharp::overloads::DotNet;
+    use interoptopus_backend_csharp::{Config, Generator};
 
     let config = Config {
         dll_name: "csharp".to_string(),
